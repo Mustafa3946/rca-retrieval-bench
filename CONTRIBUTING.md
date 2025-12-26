@@ -6,8 +6,8 @@ Thank you for your interest in contributing to this project!
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/LAR_RAG.git
-cd LAR_RAG
+git clone https://github.com/Mustafa3946/rca-retrieval-bench.git
+cd rca-retrieval-bench
 
 # Create virtual environment
 python -m venv .venv
