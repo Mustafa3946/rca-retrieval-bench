@@ -1,0 +1,18 @@
+# LAR-RAG: Latency-Aware Retrieval for Root Cause Analysis
+# Python 3.10+
+
+# Core dependencies
+numpy>=1.24.0
+networkx>=3.1
+scipy>=1.10.0
+
+# Retrieval
+rank-bm25>=0.2.2
+faiss-cpu>=1.7.4
+
+# Optional: For production use
+# openai>=1.12.0              # For embeddings
+# python-dotenv>=1.0.0        # For config
+# tqdm>=4.66.0                # For progress bars
+# pyarrow>=14.0.0             # For Parquet storage
+# duckdb>=0.9.0               # For occurrence store
