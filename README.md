@@ -17,8 +17,8 @@ Benchmarking framework for evaluating retrieval quality and latency tradeoffs in
 ### Installation
 
 ```bash
-git clone https://github.com/your-org/LAR_RAG.git
-cd LAR_RAG
+git clone https://github.com/Mustafa3946/rca-retrieval-bench.git
+cd rca-retrieval-bench
 python -m venv .venv
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 pip install -r requirements.txt
