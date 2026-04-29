@@ -118,18 +118,6 @@ MIT License - see [LICENSE](LICENSE) for details
 
 Contributions welcome via issues or pull requests.
 
-## Citation
 
-If you use LAR-RAG in your research, please cite:
-
-```bibtex
-@inproceedings{larrag2026,
-  title={Quality--Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations},
-  author={Mohammad Abdur Rahim Mustafa and Quazi Mamun},
-  booktitle={IEEE INFOCOM},
-  year={2026},
-  organization={Charles Sturt University}
-}
-```
 
 
