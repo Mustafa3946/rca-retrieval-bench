@@ -1,7 +1,8 @@
-# Quality–Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations
+﻿# Quality–Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18628812.svg)](https://doi.org/10.5281/zenodo.18628812)
 
 Benchmarking framework for evaluating retrieval quality and latency tradeoffs in RCA template retrieval for GenAI-driven network operations.
 
@@ -65,15 +66,15 @@ See [examples/simple_demo.py](examples/simple_demo.py) for a complete working ex
 
 ```
 LAR_RAG/
-├── src/
-│   ├── retrieval/          # Core LAR-RAG implementation
-│   ├── utils/              # Temporal & topology scoring
-│   ├── preprocess/         # Log parsing utilities
-│   ├── embeddings/         # Embedding generation
-│   └── storage/            # Data structures
-├── examples/               # Usage examples
-├── tests/                  # Unit tests
-└── docs/                   # Documentation
+Ôö£ÔöÇÔöÇ src/
+Ôöé   Ôö£ÔöÇÔöÇ retrieval/          # Core LAR-RAG implementation
+Ôöé   Ôö£ÔöÇÔöÇ utils/              # Temporal & topology scoring
+Ôöé   Ôö£ÔöÇÔöÇ preprocess/         # Log parsing utilities
+Ôöé   Ôö£ÔöÇÔöÇ embeddings/         # Embedding generation
+Ôöé   ÔööÔöÇÔöÇ storage/            # Data structures
+Ôö£ÔöÇÔöÇ examples/               # Usage examples
+Ôö£ÔöÇÔöÇ tests/                  # Unit tests
+ÔööÔöÇÔöÇ docs/                   # Documentation
 ```
 
 ## Algorithm
@@ -84,7 +85,7 @@ LAR-RAG is a two-stage retrieval approach optimized for quality-latency tradeoff
 
 **Stage 2**: Reranking with combined score:
 ```
-score = α × semantic_sim + β × temporal_decay + γ × topology_proximity
+score = ╬▒ ├ù semantic_sim + ╬▓ ├ù temporal_decay + ╬│ ├ù topology_proximity
 ```
 
 Where:
@@ -121,10 +122,12 @@ If you use LAR-RAG in your research, please cite:
 
 ```bibtex
 @inproceedings{larrag2026,
-  title={Quality–Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations},
+  title={Quality--Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations},
   author={Mohammad Abdur Rahim Mustafa and Quazi Mamun},
   booktitle={IEEE INFOCOM},
   year={2026},
   organization={Charles Sturt University}
 }
 ```
+
+
