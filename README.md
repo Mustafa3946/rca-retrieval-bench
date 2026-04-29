@@ -2,7 +2,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18628812.svg)](https://doi.org/10.5281/zenodo.18628812)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18628812-blue.svg)](https://doi.org/10.5281/zenodo.18628812)
 
 Benchmarking framework for evaluating retrieval quality and latency tradeoffs in RCA template retrieval for GenAI-driven network operations.
 
@@ -65,16 +65,18 @@ See [examples/simple_demo.py](examples/simple_demo.py) for a complete working ex
 ## Repository Structure
 
 ```
-LAR_RAG/
-Ôö£ÔöÇÔöÇ src/
-Ôöé   Ôö£ÔöÇÔöÇ retrieval/          # Core LAR-RAG implementation
-Ôöé   Ôö£ÔöÇÔöÇ utils/              # Temporal & topology scoring
-Ôöé   Ôö£ÔöÇÔöÇ preprocess/         # Log parsing utilities
-Ôöé   Ôö£ÔöÇÔöÇ embeddings/         # Embedding generation
-Ôöé   ÔööÔöÇÔöÇ storage/            # Data structures
-Ôö£ÔöÇÔöÇ examples/               # Usage examples
-Ôö£ÔöÇÔöÇ tests/                  # Unit tests
-ÔööÔöÇÔöÇ docs/                   # Documentation
+rca-retrieval-bench/
+├── src/
+│   ├── retrieval/          # Core LAR-RAG implementation
+│   ├── utils/              # Temporal & topology scoring
+│   ├── preprocess/         # Log parsing utilities
+│   ├── embeddings/         # Embedding generation
+│   └── storage/            # Data structures
+├── config/                 # Experiment configurations
+├── scripts/                # Pipeline & download scripts
+├── examples/               # Usage examples
+├── tests/                  # Unit tests
+└── docs/                   # Documentation
 ```
 
 ## Algorithm
@@ -85,7 +87,7 @@ LAR-RAG is a two-stage retrieval approach optimized for quality-latency tradeoff
 
 **Stage 2**: Reranking with combined score:
 ```
-score = ╬▒ ├ù semantic_sim + ╬▓ ├ù temporal_decay + ╬│ ├ù topology_proximity
+score = alpha * semantic_sim + beta * temporal_decay + gamma * topology_proximity
 ```
 
 Where:
