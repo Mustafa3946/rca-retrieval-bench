@@ -1,0 +1,84 @@
+# HDFS Full Run Configuration
+# Mirrors bgl_full_run.yaml for the HDFS replication experiment (revision §6.X)
+# Run via: python scripts/run_hdfs_pipeline.py --config config/hdfs_full_run.yaml
+
+run:
+  name: hdfs_full_run
+  seed: 42
+  output_dir: results/hdfs_full_run
+  top_k: 50
+  local_only: true
+
+data:
+  templates_path: data/processed/hdfs/templates.jsonl
+  embeddings:
+    manifest_path: data/processed/hdfs/template_embeddings.jsonl/manifest.json
+    shards_dir: data/processed/hdfs/template_embeddings.jsonl
+  occurrence_store:
+    db_path: data/processed/hdfs/occurrences.duckdb
+    table: occurrences
+
+ground_truth:
+  incidents_path: data/evaluation/hdfs_ground_truth_incidents.jsonl
+  qrels_path: data/evaluation/hdfs_ground_truth_qrels.jsonl
+  max_incidents: 200
+  min_relevant: 3
+  split:
+    method: time
+    train_frac: 0.8
+
+retrieval:
+  bm25:
+    index_dir: data/processed/hdfs/bm25_index
+  faiss:
+    index_path: data/index/hdfs_faiss/index.faiss
+    meta_path: data/index/hdfs_faiss/meta.json
+    template_ids_path: data/index/hdfs_faiss/template_ids.npy
+
+lar_rag:
+  alpha: 1.0
+  beta: 0.3
+  gamma: 0.3
+  time_kernel:
+    kind: asymmetric_exp
+    tau_before: 3600
+    tau_after: 7200
+  topo_kernel:
+    kind: exp
+    tau: 2.0
+  stage1:
+    mode: hybrid
+    candidates: 1000
+
+methods:
+  bm25_baseline:
+    enabled: true
+
+  dense_baseline:
+    enabled: true
+
+  hybrid_baseline:
+    enabled: true
+    bm25_weight: 0.3
+    dense_weight: 0.7
+    stage1_k: 1000
+
+  lar_rag_full:
+    enabled: true
+    use_temporal: true
+    use_topology: true
+
+evaluation:
+  metrics:
+    - recall@1
+    - recall@5
+    - recall@10
+    - recall@20
+    - mrr@10
+    - ndcg@10
+    - map
+
+  output_dir: results/hdfs_full_run
+  save_per_query: true
+  save_summary: true
+  save_run_meta: true

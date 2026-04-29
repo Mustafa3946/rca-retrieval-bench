@@ -254,114 +254,71 @@ class OccurrenceStore:
 def build_occurrence_store(
     template_map_file: str,
     db_path: str,
-    batch_size: int = 10000
+    batch_size: int = 10000  # kept for API compat, unused in fast path
 ):
     """
     Build occurrence store from template_map.jsonl.
-    
-    STREAMING IMPLEMENTATION:
-    - Reads template_map.jsonl line-by-line (no full load)
-    - Inserts in batches for efficiency
-    - Creates indexes after bulk insert
-    
+
+    FAST IMPLEMENTATION (DuckDB 1.0+):
+    Uses DuckDB's native read_ndjson_auto() to bulk-load the JSONL file
+    entirely inside the database engine — no Python-level row iteration.
+    11 M rows load in seconds rather than hours.
+
     Args:
         template_map_file: Path to template_map.jsonl
         db_path: Output DuckDB database path
-        batch_size: Insert batch size (default: 10000)
+        batch_size: Unused (kept for backwards compatibility)
     """
     logger.info("="*80)
-    logger.info("BUILDING OCCURRENCE STORE (DISK-BACKED)")
+    logger.info("BUILDING OCCURRENCE STORE (DISK-BACKED, FAST PATH)")
     logger.info("="*80)
     logger.info(f"Input: {template_map_file}")
     logger.info(f"Output: {db_path}")
-    logger.info(f"Batch size: {batch_size}")
-    
-    # Remove existing database
+
     db_path_obj = Path(db_path)
-    if db_path_obj.exists():
-        logger.warning(f"Removing existing database: {db_path}")
-        db_path_obj.unlink()
-    
-    # Create directory
+
+    # Remove stale database + WAL if present
+    for suffix in ('', '.wal'):
+        p = Path(str(db_path) + suffix)
+        if p.exists():
+            logger.warning(f"Removing existing file: {p}")
+            p.unlink()
+
     db_path_obj.parent.mkdir(parents=True, exist_ok=True)
-    
-    # Connect to new database
+
+    # Use absolute path so DuckDB's file reader can find the JSONL
+    jsonl_abs = str(Path(template_map_file).resolve())
+
     conn = duckdb.connect(str(db_path))
-    
-    # Create table
-    logger.info("Creating table schema...")
-    conn.execute("""
-        CREATE TABLE occurrences (
-            log_id VARCHAR,
-            template_id VARCHAR,
-            timestamp DOUBLE,
-            node_id VARCHAR
-        )
+
+    logger.info("Bulk-loading via read_ndjson_auto (native DuckDB JSON reader)...")
+    conn.execute(f"""
+        CREATE TABLE occurrences AS
+        SELECT
+            CAST(log_id      AS VARCHAR) AS log_id,
+            CAST(template_id AS VARCHAR) AS template_id,
+            epoch(CAST(timestamp AS TIMESTAMP))::DOUBLE  AS timestamp,
+            CAST(node_id     AS VARCHAR) AS node_id
+        FROM read_ndjson_auto('{jsonl_abs}',
+                              ignore_errors=true)
     """)
-    
-    # Stream and insert
-    logger.info("Streaming template_map.jsonl...")
-    batch = []
-    total_inserted = 0
-    
-    with open(template_map_file, 'r', encoding='utf-8') as f:
-        for line_num, line in enumerate(f, 1):
-            if not line.strip():
-                continue
-            
-            try:
-                mapping = json.loads(line)
-                
-                # Parse timestamp to Unix epoch
-                timestamp_str = mapping['timestamp']
-                from datetime import datetime
-                dt = datetime.fromisoformat(timestamp_str)
-                timestamp_unix = dt.timestamp()
-                
-                batch.append((
-                    mapping['log_id'],
-                    mapping['template_id'],
-                    timestamp_unix,
-                    mapping['node_id']
-                ))
-                
-                # Insert batch
-                if len(batch) >= batch_size:
-                    conn.executemany(
-                        "INSERT INTO occurrences VALUES (?, ?, ?, ?)",
-                        batch
-                    )
-                    total_inserted += len(batch)
-                    logger.info(f"  Inserted {total_inserted:,} occurrences...")
-                    batch = []
-            
-            except Exception as e:
-                logger.error(f"Error on line {line_num}: {e}")
-                continue
-    
-    # Insert remaining
-    if batch:
-        conn.executemany(
-            "INSERT INTO occurrences VALUES (?, ?, ?, ?)",
-            batch
-        )
-        total_inserted += len(batch)
-    
-    logger.info(f"✅ Inserted {total_inserted:,} total occurrences")
-    
-    # Create indexes
+
+    total = conn.execute("SELECT COUNT(*) FROM occurrences").fetchone()[0]
+    logger.info(f"  Loaded {total:,} rows")
+
     logger.info("Creating indexes...")
-    conn.execute("CREATE INDEX idx_template_id ON occurrences(template_id)")
+    conn.execute("CREATE INDEX idx_template_id   ON occurrences(template_id)")
     conn.execute("CREATE INDEX idx_template_time ON occurrences(template_id, timestamp)")
     conn.execute("CREATE INDEX idx_template_node ON occurrences(template_id, node_id)")
-    logger.info("✅ Indexes created")
-    
-    # Verify
-    stats = conn.execute("SELECT COUNT(*) as total, COUNT(DISTINCT template_id) as templates FROM occurrences").fetchone()
-    logger.info(f"✅ Store built: {stats[0]:,} occurrences, {stats[1]:,} unique templates")
-    
+    logger.info("Indexes created")
+
+    stats = conn.execute(
+        "SELECT COUNT(*) as total, COUNT(DISTINCT template_id) as templates FROM occurrences"
+    ).fetchone()
+    logger.info(f"Store built: {stats[0]:,} occurrences, {stats[1]:,} unique templates")
+
     conn.close()
-    logger.info(f"✅ Database saved to {db_path}")
+    logger.info(f"Database saved to {db_path}")
 
 
 if __name__ == "__main__":
