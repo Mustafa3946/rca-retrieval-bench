@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the associated paper."
+title: "Quality-Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations"
+authors:
+  - family-names: "Mustafa"
+    given-names: "Mohammad"
+    orcid: "https://orcid.org/0009-0001-7316-4490"
+repository-code: "https://github.com/Mustafa3946/rca-retrieval-bench"
+url: "https://github.com/Mustafa3946/rca-retrieval-bench"
+license: "MIT"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Mustafa"
+      given-names: "Mohammad"
+      orcid: "https://orcid.org/0009-0001-7316-4490"
+  title: "Quality-Latency Benchmarking of RCA Template Retrieval for GenAI-Driven Network Operations"
+  journal: "Applied Artificial Intelligence"
+  year: 2026
+  publisher: "Taylor & Francis"
+  doi: "10.1080/08839514.2026.2684312"
+  url: "https://doi.org/10.1080/08839514.2026.2684312"
